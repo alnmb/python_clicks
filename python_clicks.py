@@ -2,6 +2,7 @@ import pyautogui
 import os
 import time
 import platform
+from datetime import datetime
 
 def detect_os():
     print('\nIdentificando tu sistema operativo...')
@@ -18,13 +19,18 @@ def detect_os():
     print(f'\nSistema operativo detectado:  {system_platform}\n')
 
 def click(intervalo):
+    intervalo = int(intervalo)
     width = 1032
     height = 26
     contador = 0
     while True:
         pyautogui.click(width, height, button='left')
+        
         contador+=1
-        print(f"\rClick: {contador}", end='', flush=True) 
+        tiempo = (contador * intervalo)/60
+        temp = f"{tiempo:.2f}"
+
+        print(f"\rClick: {contador} > Tiempo ejecutando: {temp}", end='', flush=True) 
 
         time.sleep(int(intervalo))
 
