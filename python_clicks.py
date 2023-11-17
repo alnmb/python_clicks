@@ -1,28 +1,33 @@
 import pyautogui
+import os
+import time
 import platform
-import ctypes
-import subprocess
-
 
 def detect_os():
     print('\nIdentificando tu sistema operativo...')
     system_platform = platform.system()
     if system_platform == "Windows":
         # Prevent sleep on Windows
+        import ctypes
         ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
     elif system_platform == "Darwin":
         # Prevent sleep on Mac
+        import subprocess
         subprocess.run(["caffeinate", "-u", "-t", "1"])
         system_platform = 'MacOS'
-    print(f'\nSistema operativo detectado:  {system_platform}')
+    print(f'\nSistema operativo detectado:  {system_platform}\n')
 
 def click(intervalo):
-    wh = pyautogui.size()
-    width = wh[0]/4
-    height = (wh[1]/2) * -1
-    pyautogui.move(width, height)
+    width = 1032
+    height = 26
+    contador = 0
+    while True:
+        pyautogui.click(width, height, button='left')
+        contador+=1
+        print(f"\rClick: {contador}", end='', flush=True) 
 
-    pyautogui.click(width, height, button='left',interval=intervalo)
+        time.sleep(int(intervalo))
+
 
 
 
