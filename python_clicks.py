@@ -1,8 +1,24 @@
-import pyautogui
 import os
 import time
 import platform
 from datetime import datetime
+import subprocess
+import sys
+import atexit
+
+def maximize_window(title):
+    import pygetwindow as gw
+    window = gw.getWindowsWithTitle(title)
+    if window:
+        window[0].maximize()
+
+def get_active_window_title():
+    import pygetwindow as gw
+    active_window = gw.getActiveWindow()
+    if active_window:
+        return active_window.title
+    else:
+        return None
 
 def detect_os():
     print('\nIdentificando tu sistema operativo...')
@@ -18,30 +34,50 @@ def detect_os():
         system_platform = 'MacOS'
     print(f'\nSistema operativo detectado:  {system_platform}\n')
 
-def click(intervalo):
+def convert_time(seconds):
+    hours = seconds // 3600
+    minutes = (seconds - hours * 3600) // 60
+    remaining = seconds - hours * 3600 - minutes * 60
+    return hours, minutes, remaining
+
+def click():
+    import pyautogui
+    intervalo = input('Cada cuanto quieres que haga click?>> ')
     intervalo = int(intervalo)
     width = 1032
     height = 26
     contador = 0
-    while True:
-        pyautogui.click(width, height, button='left')
-        
-        contador+=1
-        tiempo = (contador * intervalo)/60
-        temp = f"{tiempo:.2f}"
 
-        print(f"\rClick: {contador} > Tiempo ejecutando: {temp}", end='', flush=True) 
+    print('Presione ctrl+c para detener el script')
+    try:
+        while True:
+            pyautogui.click(width, height, button='left')
+            
+            contador+=1
+            calc_tiempo = (contador * intervalo)
+            horas,minutos,segundos = convert_time(calc_tiempo)
 
-        time.sleep(int(intervalo))
+            print(f"\rClick: {contador} > Tiempo ejecutando: {horas}:{minutos}:{segundos}", end='', flush=True) 
 
-
-
-
+            time.sleep(int(intervalo))
+            pass
+    
+    except KeyboardInterrupt:
+         # Handle Ctrl+C (user interruption) gracefully
+        print("\nDeteniendo el script")
+        #os.system('deactivate')
+    # finally:
+    #     os.system('deactivate')
+    
 
 def main():
-    intervalo = input('Cada cuanto quieres que haga click?>> ')
+
+    title = get_active_window_title()
+    print("Active Window Title:", title)
+    maximize_window(title)
     detect_os()
-    click(intervalo)
+    atexit.register(click)
+    
 
 if __name__ == '__main__':
     main()
